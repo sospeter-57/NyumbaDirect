@@ -28,14 +28,15 @@ export default function Layout() {
       <header className="bg-black/95 text-white sticky top-0 z-50">
         <div className="px-12 h-18 flex items-center justify-center gap-8">
           <div className="flex items-center gap-3">
-            <Link to="/" className="text-2xl font-bold tracking-tight">
+            <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <img src="/favicon.png" alt="" className="w-7 h-7 rounded-lg" />
               Nyumba<span className="text-green-400">Direct</span>
             </Link>
             <span className="text-slate-500 text-sm hidden sm:inline ml-3 border-l border-slate-700 pl-3">
               It's U Snow
             </span>
           </div>
-          <nav className="flex items-center gap-6 text-base">
+          <nav className="flex items-center gap-6 text-base ml-12">
             {user ? (
               <>
                 {isLandlord && (

@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { api } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import { haversineDistance, formatDistance } from '../utils/haversine'
 import type { Property, RepairRate } from '../types'
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+
+function ZoomControls() {
+  const map = useMap()
+  return (
+    <div className="absolute bottom-4 right-4 flex flex-col gap-1 z-[1000]">
+      <button onClick={() => map.zoomIn()} className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg shadow-md flex items-center justify-center text-lg font-medium transition-colors">+</button>
+      <button onClick={() => map.zoomOut()} className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 w-9 h-9 rounded-lg shadow-md flex items-center justify-center text-lg font-medium transition-colors">−</button>
+    </div>
+  )
+}
 import markerIcon from 'leaflet/dist/images/marker-icon.png'
 import markerShadow from 'leaflet/dist/images/marker-shadow.png'
 
@@ -290,39 +300,61 @@ export default function PropertyDetailPage() {
 
           <div className="mt-4">
             <button
-              onClick={() => setShowMap(!showMap)}
+              onClick={() => setShowMap(true)}
               className="flex items-center gap-2 text-sm font-medium text-green-700 hover:text-green-800 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553-2.276A1 1 0 0021 13.382V5.618a1 1 0 00-1.447-.894L15 7m0 13V7m0 0l-6-3" />
               </svg>
-              {showMap ? 'Hide Map' : 'View on Map'}
+              View on Map
             </button>
-            {showMap && property && (
-              <div className="mt-2 h-64 rounded-xl overflow-hidden border border-slate-200">
-                <MapContainer
-                  center={[property.latitude, property.longitude]}
-                  zoom={15}
-                  className="w-full h-full"
-                  zoomControl={true}
-                  scrollWheelZoom={true}
-                >
-                  <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={[property.latitude, property.longitude]}>
-                    <Popup>
-                      <div className="text-sm">
-                        <strong>{property.title || property.house_type}</strong>
-                        <br />KES {property.rent.toLocaleString()}/month
-                      </div>
-                    </Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
-            )}
           </div>
+
+          {showMap && property && (
+              <div className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowMap(false)}>
+              <div className="bg-white rounded-2xl overflow-hidden w-full max-w-4xl shadow-2xl border border-slate-200 animate-in" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-gradient-to-r from-green-700 to-green-600 px-6 py-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3 text-white">
+                    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553-2.276A1 1 0 0021 13.382V5.618a1 1 0 00-1.447-.894L15 7m0 13V7m0 0l-6-3" />
+                    </svg>
+                    <div>
+                      <h3 className="font-semibold">{property.title || property.house_type}</h3>
+                      <p className="text-green-200 text-xs">KES {property.rent.toLocaleString()}/month &middot; {property.location_desc || 'Nairobi'}</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowMap(false)} className="text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-xl p-2 transition-colors">
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="relative h-[55vh] min-h-[380px]">
+                  <MapContainer
+                    center={[property.latitude, property.longitude]}
+                    zoom={16}
+                    className="w-full h-full z-0"
+                    zoomControl={false}
+                    scrollWheelZoom={true}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <ZoomControls />
+                    <Marker position={[property.latitude, property.longitude]}>
+                      <Popup>
+                        <div className="text-sm">
+                          <strong>{property.title || property.house_type}</strong>
+                          <br />KES {property.rent.toLocaleString()}/month
+                        </div>
+                      </Popup>
+                    </Marker>
+                  </MapContainer>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <div>

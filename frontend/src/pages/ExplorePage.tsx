@@ -65,11 +65,15 @@ function PropertyCard({ property, userLat, userLng }: { property: Property; user
   )
 }
 
+const HOUSE_TYPES = ['All', 'Single', 'Bedsitter', '1-Bed', '2-Bed', '3-Bed', 'Mansion'] as const
+
 export default function ExplorePage() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [userLat, setUserLat] = useState<number | null>(null)
   const [userLng, setUserLng] = useState<number | null>(null)
+  const [filterType, setFilterType] = useState<string>('All')
+  const [filterPrice, setFilterPrice] = useState<string>('')
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -88,30 +92,69 @@ export default function ExplorePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  const filtered = useMemo(() => {
+    let result = properties
+    if (filterType !== 'All') {
+      result = result.filter((p) => p.house_type === filterType)
+    }
+    const price = parseInt(filterPrice)
+    if (!isNaN(price) && price > 0) {
+      result = result.filter((p) => Math.abs(p.rent - price) <= 1000)
+    }
+    return result
+  }, [properties, filterType, filterPrice])
+
   return (
     <div className="px-12 py-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-black">Find Your Next Home</h1>
-          <p className="text-slate-400 text-sm mt-1">
-            {properties.length} {properties.length === 1 ? 'property' : 'properties'} available
-          </p>
+      <div className="flex items-start justify-between mb-6">
+        <div className="flex items-end gap-6">
+          <div>
+            <h1 className="text-2xl font-bold text-black">Find Your Next Home</h1>
+            <p className="text-slate-400 text-sm mt-1">
+              {filtered.length} {filtered.length === 1 ? 'property' : 'properties'} available
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-slate-500 font-medium">Filter by</span>
+            <div className="relative">
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-10 text-sm font-medium text-slate-700 cursor-pointer hover:border-green-400 focus:outline-none focus:ring-2 focus:ring-green-200 transition-colors"
+              >
+                {HOUSE_TYPES.map((t) => (
+                  <option key={t} value={t}>{t === 'All' ? 'All Types' : t}</option>
+                ))}
+              </select>
+              <svg className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+            <div className="border-l border-slate-200 h-8" />
+            <input
+              type="number"
+              value={filterPrice}
+              onChange={(e) => setFilterPrice(e.target.value)}
+              placeholder="Price (KES) ±1000"
+              className="w-40 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-400 transition-colors"
+            />
+          </div>
         </div>
         {loading && (
-          <div className="flex items-center gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 text-xs text-slate-400 shrink-0">
             <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
             Loading...
           </div>
         )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {properties.map((p) => (
+        {filtered.map((p) => (
           <PropertyCard key={p.id} property={p} userLat={userLat} userLng={userLng} />
         ))}
-        {!loading && properties.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <div className="col-span-full text-center py-20 text-slate-400">
             <p className="text-lg font-medium">No properties found</p>
-            <p className="text-sm mt-1">Check back later for new listings</p>
+            <p className="text-sm mt-1">{filterType === 'All' ? 'Check back later for new listings' : `No ${filterType} properties available`}</p>
           </div>
         )}
       </div>
