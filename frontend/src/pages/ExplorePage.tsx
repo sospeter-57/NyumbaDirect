@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../utils/api'
 import { haversineDistance, formatDistance } from '../utils/haversine'
+import { useAuth } from '../context/AuthContext'
 import type { Property } from '../types'
 
 function PropertyCard({ property, userLat, userLng }: { property: Property; userLat: number | null; userLng: number | null }) {
@@ -68,12 +69,14 @@ function PropertyCard({ property, userLat, userLng }: { property: Property; user
 const HOUSE_TYPES = ['All', 'Single', 'Bedsitter', '1-Bed', '2-Bed', '3-Bed', 'Mansion'] as const
 
 export default function ExplorePage() {
+  const { isTenant } = useAuth()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
   const [userLat, setUserLat] = useState<number | null>(null)
   const [userLng, setUserLng] = useState<number | null>(null)
   const [filterType, setFilterType] = useState<string>('All')
   const [filterPrice, setFilterPrice] = useState<string>('')
+  const [unlockedIds, setUnlockedIds] = useState<Set<number>>(new Set())
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -92,6 +95,14 @@ export default function ExplorePage() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    if (isTenant) {
+      api.tenant.unlockedIds()
+        .then((ids) => setUnlockedIds(new Set(ids)))
+        .catch(() => {})
+    }
+  }, [isTenant])
+
   const filtered = useMemo(() => {
     let result = properties
     if (filterType !== 'All') {
@@ -101,8 +112,11 @@ export default function ExplorePage() {
     if (!isNaN(price) && price > 0) {
       result = result.filter((p) => Math.abs(p.rent - price) <= 1000)
     }
+    if (isTenant && unlockedIds.size > 0) {
+      result = result.filter((p) => !unlockedIds.has(p.id))
+    }
     return result
-  }, [properties, filterType, filterPrice])
+  }, [properties, filterType, filterPrice, isTenant, unlockedIds])
 
   return (
     <div className="px-12 py-8">

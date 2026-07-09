@@ -40,3 +40,24 @@ func (h *TenantHandler) Profile(w http.ResponseWriter, r *http.Request) {
 		"reviews": reviews,
 	})
 }
+
+func (h *TenantHandler) UnlockedIDs(w http.ResponseWriter, r *http.Request) {
+	userID := auth.GetUserID(r)
+	rows, err := h.db.Query("SELECT property_id FROM contact_unlocks WHERE tenant_id = ?", userID)
+	if err != nil {
+		writeJSON(w, http.StatusOK, []int64{})
+		return
+	}
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err == nil {
+			ids = append(ids, id)
+		}
+	}
+	if ids == nil {
+		ids = []int64{}
+	}
+	writeJSON(w, http.StatusOK, ids)
+}

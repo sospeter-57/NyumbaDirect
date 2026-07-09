@@ -117,6 +117,8 @@ export const api = {
   },
 
   tenant: {
+    unlockedIds: () =>
+      request<number[]>('/tenant/unlocked-ids'),
     profile: () =>
       request<{
         user: import('../types').User

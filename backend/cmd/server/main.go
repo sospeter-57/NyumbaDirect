@@ -149,6 +149,7 @@ func main() {
 			r.Group(func(r chi.Router) {
 				r.Use(authMw, tenantMw)
 				r.Get("/profile", tenantHandler.Profile)
+				r.Get("/unlocked-ids", tenantHandler.UnlockedIDs)
 			})
 		})
 
