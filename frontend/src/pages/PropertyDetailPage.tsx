@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { api } from '../utils/api'
+import { api, uploadUrl } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import { haversineDistance, formatDistance } from '../utils/haversine'
 import type { Property, RepairRate } from '../types'
@@ -218,8 +218,8 @@ export default function PropertyDetailPage() {
               <div className="mb-4">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {photos.map((p) => (
-                    <a key={p.id} href={p.url} target="_blank" rel="noopener noreferrer" className="block aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 hover:opacity-90 transition-opacity">
-                      <img src={p.url} alt="" className="w-full h-full object-cover" />
+                    <a key={p.id} href={uploadUrl(p.url)} target="_blank" rel="noopener noreferrer" className="block aspect-video rounded-xl overflow-hidden bg-slate-100 border border-slate-200 hover:opacity-90 transition-opacity">
+                      <img src={uploadUrl(p.url)} alt="" className="w-full h-full object-cover" />
                     </a>
                   ))}
                 </div>
@@ -236,7 +236,7 @@ export default function PropertyDetailPage() {
                     <p className="text-sm font-medium text-green-800">Tenancy Agreement</p>
                     <p className="text-xs text-green-600 truncate">{property.agreement_doc}</p>
                   </div>
-                  <a href={property.agreement_doc} target="_blank" rel="noopener noreferrer" className="bg-green-700 hover:bg-green-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl shrink-0 transition-colors">
+                  <a href={uploadUrl(property.agreement_doc)} target="_blank" rel="noopener noreferrer" className="bg-green-700 hover:bg-green-800 text-white text-xs font-medium px-3 py-1.5 rounded-xl shrink-0 transition-colors">
                     Download
                   </a>
                 </div>

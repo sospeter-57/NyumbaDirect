@@ -1,4 +1,10 @@
-const API_BASE = '/api/v1'
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || ''
+const API_BASE = `${BACKEND_URL}/api/v1`
+
+export function uploadUrl(path: string): string {
+  if (!path || path.startsWith('http')) return path
+  return `${BACKEND_URL}${path}`
+}
 
 function getToken(): string | null {
   return localStorage.getItem('token')

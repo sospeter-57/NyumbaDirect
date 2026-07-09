@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
-import { api } from '../utils/api'
+import { api, uploadUrl } from '../utils/api'
 import type { User, Property } from '../types'
 
 export default function LandlordProfilePage() {
@@ -58,7 +58,7 @@ export default function LandlordProfilePage() {
             <div className="relative group shrink-0">
               <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center text-white text-3xl font-bold overflow-hidden ring-2 ring-white/50">
                 {user.profile_picture ? (
-                  <img src={user.profile_picture} alt="" className="w-full h-full object-cover" />
+                  <img src={uploadUrl(user.profile_picture)} alt="" className="w-full h-full object-cover" />
                 ) : (
                   (user.name || user.business_name || user.phone).charAt(0).toUpperCase()
                 )}
