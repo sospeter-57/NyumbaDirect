@@ -4,3 +4,5 @@
 backend/nyumbadirect.db
 backend/nyumbadirect.db-shm
 backend/nyumbadirect.db-wal
+
+backend/.env.example
