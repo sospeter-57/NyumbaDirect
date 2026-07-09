@@ -98,6 +98,24 @@ func (h *UploadHandler) PropertyMedia(w http.ResponseWriter, r *http.Request) {
 	var uploaded []map[string]string
 	isFirst := true
 
+	if fhs := r.MultipartForm.File["agreement_doc"]; len(fhs) > 0 {
+		fh := fhs[0]
+		file, err := fh.Open()
+		if err == nil {
+			ext := filepath.Ext(fh.Filename)
+			filename := fmt.Sprintf("agreement_%d_%d%s", propID, time.Now().UnixMilli(), ext)
+			dest, _ := os.Create(filepath.Join(dir, filename))
+			if dest != nil {
+				io.Copy(dest, file)
+				dest.Close()
+				url := fmt.Sprintf("/uploads/properties/%s", filename)
+				h.db.Exec("UPDATE properties SET agreement_doc = ? WHERE id = ?", url, propID)
+				uploaded = append(uploaded, map[string]string{"url": url, "type": "agreement"})
+			}
+			file.Close()
+		}
+	}
+
 	for key := range r.MultipartForm.File {
 		files := r.MultipartForm.File[key]
 		for _, fh := range files {

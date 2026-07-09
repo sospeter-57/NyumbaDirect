@@ -18,6 +18,7 @@ export default function NewListingPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [mediaFiles, setMediaFiles] = useState<File[]>([])
+  const [agreementFile, setAgreementFile] = useState<File | null>(null)
   const [uploadingMedia, setUploadingMedia] = useState(false)
 
   const [form, setForm] = useState<ListingFormData>({
@@ -65,9 +66,9 @@ export default function NewListingPage() {
     setError('')
     try {
       const prop = await api.properties.create(form)
-      if (mediaFiles.length > 0) {
-        setUploadingMedia(true)
-        await api.upload.propertyMedia(prop.id, mediaFiles)
+      setUploadingMedia(true)
+      if (mediaFiles.length > 0 || agreementFile) {
+        await api.upload.propertyMedia(prop.id, mediaFiles, agreementFile || undefined)
       }
       navigate(`/properties/${prop.id}`)
     } catch (err: unknown) {
@@ -389,14 +390,13 @@ export default function NewListingPage() {
               onChange={(e) => {
                 const file = e.target.files?.[0]
                 if (file) {
-                  const formData = new FormData()
-                  formData.append('media', file)
+                  setAgreementFile(file)
                   update('agreement_doc', file.name)
                 }
               }}
               className="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
             />
-            {form.agreement_doc && <p className="text-xs text-green-700 mt-1">Selected: {form.agreement_doc}</p>}
+            {agreementFile && <p className="text-xs text-green-700 mt-1">Selected: {agreementFile.name}</p>}
           </div>
 
           <div

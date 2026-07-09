@@ -150,9 +150,10 @@ export const api = {
   },
 
   upload: {
-    propertyMedia: (id: number, files: File[]) => {
+    propertyMedia: (id: number, files: File[], agreementFile?: File) => {
       const form = new FormData()
       files.forEach((f) => form.append('media', f))
+      if (agreementFile) form.append('agreement_doc', agreementFile)
       return request<{ media: { url: string; type: string }[] }>(`/properties/${id}/media`, {
         method: 'POST',
         body: form,
