@@ -57,24 +57,24 @@ export default function TenantProfilePage() {
   }
 
   if (loading) {
-    return <div className="px-12 py-8 text-center text-slate-500">Loading profile...</div>
+    return <div className="px-12 py-8 text-center text-slate-500 dark:text-slate-400">Loading profile...</div>
   }
 
   if (!user) {
     return (
       <div className="px-12 py-8 text-center">
-        <p className="text-slate-500">Could not load profile.</p>
-        <Link to="/explore" className="text-green-700 text-sm mt-2 inline-block">Back to Explore</Link>
+        <p className="text-slate-500 dark:text-slate-400">Could not load profile.</p>
+        <Link to="/explore" className="text-green-700 dark:text-green-400 text-sm mt-2 inline-block">Back to Explore</Link>
       </div>
     )
   }
 
   return (
     <div className="px-12 py-8 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold text-black mb-1">My Profile</h1>
-      <p className="text-slate-500 text-sm mb-8">Your activity on NyumbaDirect</p>
+      <h1 className="text-2xl font-bold text-black dark:text-white mb-1">My Profile</h1>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-8">Your activity on NyumbaDirect</p>
 
-      <div className="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl overflow-hidden mb-6">
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-slate-200 dark:border-gray-700 rounded-2xl overflow-hidden mb-6">
         <div className="bg-gradient-to-r from-green-700 to-green-600 px-6 py-5">
           <div className="flex items-center gap-4">
             <div className="relative group shrink-0">
@@ -96,67 +96,67 @@ export default function TenantProfilePage() {
             </div>
             <div className="text-white">
               <h2 className="text-xl font-bold">{user.name || 'Tenant'}</h2>
-              <p className="text-green-200 text-sm capitalize">{user.role}</p>
+              <p className="text-green-200 dark:text-green-400 text-sm capitalize">{user.role}</p>
             </div>
           </div>
         </div>
         <div className="px-6 py-4 grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-slate-400 text-xs uppercase tracking-wider">Phone</p>
-            <p className="text-black font-medium mt-0.5">{user.phone}</p>
+            <p className="text-slate-400 dark:text-slate-500 text-xs uppercase tracking-wider">Phone</p>
+            <p className="text-black dark:text-white font-medium mt-0.5">{user.phone}</p>
           </div>
           <div>
-            <p className="text-slate-400 text-xs uppercase tracking-wider">Member Since</p>
-            <p className="text-black font-medium mt-0.5">{new Date(user.created_at).toLocaleDateString()}</p>
+            <p className="text-slate-400 dark:text-slate-500 text-xs uppercase tracking-wider">Member Since</p>
+            <p className="text-black dark:text-white font-medium mt-0.5">{new Date(user.created_at).toLocaleDateString()}</p>
           </div>
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-6">
-        <h2 className="text-lg font-semibold text-black mb-3">
+      <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold text-black dark:text-white mb-3">
           Properties Viewed ({unlocks.length})
         </h2>
         {unlocks.length === 0 ? (
-          <p className="text-sm text-slate-500">No properties viewed yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No properties viewed yet.</p>
         ) : (
           <div className="space-y-3">
             {unlocks.map((u) => (
               <div key={u.id} className="flex items-center justify-between border-b border-slate-100 pb-3 last:border-0 last:pb-0">
                 <div>
-                  <Link to={`/properties/${u.property_id}`} className="text-sm font-medium text-green-700 hover:text-green-800">
+                  <Link to={`/properties/${u.property_id}`} className="text-sm font-medium text-green-700 dark:text-green-400 hover:text-green-800">
                     {u.property_title || `${u.house_type} Unit`}
                   </Link>
-                  <p className="text-xs text-slate-500">{u.house_type}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">{u.house_type}</p>
                 </div>
-                <span className="text-xs text-slate-400">{new Date(u.unlocked_at).toLocaleDateString()}</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{new Date(u.unlocked_at).toLocaleDateString()}</span>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-black mb-3">
+      <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-black dark:text-white mb-3">
           My Reviews ({reviews.length})
         </h2>
         {reviews.length === 0 ? (
-          <p className="text-sm text-slate-500">No reviews submitted yet.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">No reviews submitted yet.</p>
         ) : (
           <div className="space-y-3">
             {reviews.map((r) => (
               <div key={r.id} className="border-b border-slate-100 pb-3 last:border-0 last:pb-0">
                 <div className="flex items-center justify-between mb-1">
-                  <Link to={`/properties/${r.property_id}`} className="text-sm font-medium text-green-700 hover:text-green-800">
+                  <Link to={`/properties/${r.property_id}`} className="text-sm font-medium text-green-700 dark:text-green-400 hover:text-green-800">
                     {r.property_title || `${r.house_type} Unit`}
                   </Link>
-                  <span className="text-xs text-slate-400">{new Date(r.created_at).toLocaleDateString()}</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">{new Date(r.created_at).toLocaleDateString()}</span>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs">
-                  {r.is_fraud && <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded-lg">Reported Fraud</span>}
-                  {r.is_occupied && <span className="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-lg">Occupied</span>}
-                  {r.extra_fees && <span className="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-lg">Extra Fees</span>}
+                  {r.is_fraud && <span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-2 py-0.5 rounded-lg">Reported Fraud</span>}
+                  {r.is_occupied && <span className="bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-0.5 rounded-lg">Occupied</span>}
+                  {r.extra_fees && <span className="bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-400 px-2 py-0.5 rounded-lg">Extra Fees</span>}
                 </div>
-                {r.comments && <p className="text-xs text-slate-600 mt-1">{r.comments}</p>}
+                {r.comments && <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">{r.comments}</p>}
               </div>
             ))}
           </div>

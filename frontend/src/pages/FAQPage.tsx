@@ -46,20 +46,20 @@ const faqs = [
 export default function FAQPage() {
   return (
     <div className="px-12 py-8 max-w-3xl mx-auto">
-      <Link to="/explore" className="text-sm text-green-700 hover:text-green-800 mb-6 inline-block bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl transition-colors">&larr; Back</Link>
-      <div className="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl p-8">
-      <h1 className="text-2xl font-bold text-black mb-8 text-center">Frequently Asked Questions</h1>
+      <Link to="/explore" className="text-sm text-green-700 dark:text-green-400 hover:text-green-800 mb-6 inline-block bg-white/80 dark:bg-gray-800 hover:bg-slate-200 dark:hover:bg-gray-700 px-3 py-1.5 rounded-xl transition-colors">&larr; Back</Link>
+      <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-slate-200 dark:border-gray-700 rounded-2xl p-8">
+      <h1 className="text-2xl font-bold text-black dark:text-white mb-8 text-center">Frequently Asked Questions</h1>
 
       <div className="space-y-5">
         {faqs.map((faq, i) => (
-          <details key={i} className="bg-white border border-slate-200 rounded-2xl overflow-hidden group">
-            <summary className="text-base font-semibold text-green-700 cursor-pointer list-none flex items-center justify-between px-6 py-5 hover:bg-green-50 transition-colors">
+          <details key={i} className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl overflow-hidden group">
+            <summary className="text-base font-semibold text-green-700 dark:text-green-400 cursor-pointer list-none flex items-center justify-between px-6 py-5 hover:bg-green-50 dark:hover:bg-green-900/30 transition-colors">
               {faq.q}
-              <span className="text-black text-2xl font-light transition-transform group-open:rotate-45 shrink-0 ml-4">+</span>
+              <span className="text-black dark:text-white text-2xl font-light transition-transform group-open:rotate-45 shrink-0 ml-4">+</span>
             </summary>
             <div className="px-6 pb-6">
-              <div className="bg-green-50 rounded-xl p-5">
-                <p className="text-sm text-slate-700 leading-relaxed" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
+              <div className="bg-green-50 dark:bg-green-900/30 rounded-xl p-5">
+                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed" style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}>
                   {faq.a}
                 </p>
               </div>

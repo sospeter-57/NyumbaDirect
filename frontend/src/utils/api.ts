@@ -148,7 +148,20 @@ export const api = {
       request<{
         user: import('../types').User
         properties: import('../types').Property[]
+        rating_average: number
+        rating_count: number
       }>('/landlord/profile'),
+    ratings: (id: number) =>
+      request<{
+        ratings: { id: number; rating: number; comment: string; tenant_name: string; profile_picture: string; created_at: string }[]
+        rating_average: number
+        rating_count: number
+      }>(`/landlord/${id}/ratings`),
+    rate: (id: number, rating: number, comment: string) =>
+      request<{ status: string }>(`/landlord/${id}/rate`, {
+        method: 'POST',
+        body: JSON.stringify({ rating, comment }),
+      }),
   },
 
   upload: {
@@ -171,6 +184,21 @@ export const api = {
         headers: {},
       })
     },
+  },
+
+  stats: {
+    get: () =>
+      request<{ active_properties: number; landlords: number; contact_unlocks: number }>('/stats'),
+  },
+
+  feedback: {
+    send: (message: string) =>
+      request<{ status: string }>('/feedback', {
+        method: 'POST',
+        body: JSON.stringify({ message }),
+      }),
+    list: () =>
+      request<{ id: number; message: string; author: string; profile_picture: string; created_at: string }[]>('/feedback'),
   },
 
   analytics: {

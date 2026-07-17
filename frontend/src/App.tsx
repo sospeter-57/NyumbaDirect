@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { DarkModeProvider } from './context/DarkModeContext'
 import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -12,6 +13,7 @@ import LandlordProfilePage from './pages/LandlordProfilePage'
 import PrivacyPage from './pages/PrivacyPage'
 import TermsPage from './pages/TermsPage'
 import FAQPage from './pages/FAQPage'
+import HomePage from './pages/HomePage'
 import type { ReactNode } from 'react'
 
 function ProtectedRoute({ children, role }: { children: ReactNode; role?: string }) {
@@ -25,7 +27,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route path="/" element={<Navigate to="/explore" replace />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/explore" element={<ExplorePage />} />
         <Route path="/properties/:id" element={<PropertyDetailPage />} />
         <Route
@@ -73,9 +75,11 @@ function AppRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <DarkModeProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </DarkModeProvider>
     </BrowserRouter>
   )
 }

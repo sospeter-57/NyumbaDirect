@@ -81,8 +81,8 @@ export default function NewListingPage() {
 
   return (
     <div className="px-12 py-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-black mb-1">Post a New Listing</h1>
-      <p className="text-slate-500 text-sm mb-6">List your property and find the perfect tenant</p>
+      <h1 className="text-2xl font-bold text-black dark:text-white mb-1">Post a New Listing</h1>
+      <p className="text-slate-500 dark:text-slate-400 text-sm mb-6">List your property and find the perfect tenant</p>
 
       {/* Step indicator */}
       <div className="flex items-center gap-2 mb-6">
@@ -110,21 +110,21 @@ export default function NewListingPage() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3 mb-4">
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-xl p-3 mb-4">
           {error}
         </div>
       )}
 
       {step === 1 && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
+        <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               House Type
             </label>
             <select
               value={form.house_type}
               onChange={(e) => update('house_type', e.target.value as HouseType)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
             >
               {HOUSE_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -136,71 +136,71 @@ export default function NewListingPage() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label className="block text-sm font-medium text-black dark:text-white mb-1">
                 Monthly Rent (KES)
               </label>
               <input
                 type="number"
                 value={form.rent || ''}
                 onChange={(e) => update('rent', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
                 min="0"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label className="block text-sm font-medium text-black dark:text-white mb-1">
                 Deposit (KES)
               </label>
               <input
                 type="number"
                 value={form.deposit || ''}
                 onChange={(e) => update('deposit', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
                 min="0"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">Title</label>
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">Title</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => update('title', e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
               placeholder="e.g., Modern 1-Bedroom in Kilimani"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               Description
             </label>
             <textarea
               value={form.description}
               onChange={(e) => update('description', e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm h-24"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white h-24"
               placeholder="Describe the property..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               Location Description
             </label>
             <input
               type="text"
               value={form.location_desc}
               onChange={(e) => update('location_desc', e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
               placeholder="e.g., Kilimani, near Junction Mall"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label className="block text-sm font-medium text-black dark:text-white mb-1">
                 Latitude
               </label>
               <input
@@ -208,11 +208,11 @@ export default function NewListingPage() {
                 step="0.0001"
                 value={form.latitude}
                 onChange={(e) => update('latitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-black mb-1">
+              <label className="block text-sm font-medium text-black dark:text-white mb-1">
                 Longitude
               </label>
               <input
@@ -220,7 +220,7 @@ export default function NewListingPage() {
                 step="0.0001"
                 value={form.longitude}
                 onChange={(e) => update('longitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm"
+                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
               />
             </div>
           </div>
@@ -237,8 +237,8 @@ export default function NewListingPage() {
       )}
 
       {step === 2 && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-black">Infrastructure & Amenities</h2>
+        <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-black dark:text-white">Infrastructure & Amenities</h2>
 
           <div className="space-y-3">
             {([
@@ -252,7 +252,7 @@ export default function NewListingPage() {
             ] as const).map(([key, label]) => (
               <label
                 key={key}
-                className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-3 cursor-pointer p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-gray-800 transition-colors"
               >
                 <input
                   type="checkbox"
@@ -265,7 +265,7 @@ export default function NewListingPage() {
                   }
                   className="accent-green-700 w-5 h-5"
                 />
-                <span className="text-sm text-black">{label}</span>
+                <span className="text-sm text-black dark:text-white">{label}</span>
               </label>
             ))}
           </div>
@@ -273,7 +273,7 @@ export default function NewListingPage() {
           <div className="flex justify-between pt-2">
             <button
               onClick={() => setStep(1)}
-              className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-medium"
+              className="bg-slate-200 dark:bg-gray-700 hover:bg-slate-300 dark:hover:bg-gray-600 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-sm font-medium"
             >
               Back
             </button>
@@ -288,11 +288,11 @@ export default function NewListingPage() {
       )}
 
       {step === 3 && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-black">
+        <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-black dark:text-white">
             Standard Repair Deductions
           </h2>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             Pre-set repair costs that will be used to calculate deposit refunds
             during move-out.
           </p>
@@ -305,7 +305,7 @@ export default function NewListingPage() {
                 setRepairItem((prev) => ({ ...prev, item_name: e.target.value }))
               }
               placeholder="Item name (e.g., Paint smudge)"
-              className="border border-slate-300 rounded-xl px-4 py-3 text-sm"
+              className="border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
             />
             <div className="flex gap-2">
               <input
@@ -318,7 +318,7 @@ export default function NewListingPage() {
                   }))
                 }
                 placeholder="Cost (KES)"
-                className="flex-1 border border-slate-300 rounded-xl px-4 py-3 text-sm"
+                className="flex-1 border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
               />
               <button
                 onClick={addRepairRate}
@@ -332,7 +332,7 @@ export default function NewListingPage() {
           {form.repair_rates.length > 0 && (
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-slate-500 border-b border-slate-200">
+                <tr className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-gray-700">
                   <th className="py-2">Item</th>
                   <th className="py-2 text-right">Cost (KES)</th>
                   <th className="py-2 w-10"></th>
@@ -341,14 +341,14 @@ export default function NewListingPage() {
               <tbody>
                 {form.repair_rates.map((r, i) => (
                   <tr key={i} className="border-b border-slate-100">
-                    <td className="py-2 text-black">{r.item_name}</td>
-                    <td className="py-2 text-right text-black">
+                      <td className="py-2 text-black dark:text-white">{r.item_name}</td>
+                      <td className="py-2 text-right text-black dark:text-white">
                       {r.cost.toLocaleString()}
                     </td>
                     <td className="py-2 text-right">
                       <button
                         onClick={() => removeRepairRate(i)}
-                        className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors"
+                        className="bg-red-50 dark:bg-red-900/30 hover:bg-red-100 text-red-600 dark:text-red-400 text-xs font-medium px-2.5 py-1.5 rounded-lg transition-colors"
                       >
                         Remove
                       </button>
@@ -362,7 +362,7 @@ export default function NewListingPage() {
           <div className="flex justify-between pt-2">
             <button
               onClick={() => setStep(2)}
-              className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-medium"
+              className="bg-slate-200 dark:bg-gray-700 hover:bg-slate-300 dark:hover:bg-gray-600 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-sm font-medium"
             >
               Back
             </button>
@@ -377,13 +377,13 @@ export default function NewListingPage() {
       )}
 
       {step === 4 && (
-        <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-black">Photos & Videos</h2>
-          <p className="text-xs text-slate-500">Upload images and videos to showcase your property.</p>
+        <div className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 space-y-4">
+          <h2 className="text-lg font-semibold text-black dark:text-white">Photos & Videos</h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">Upload images and videos to showcase your property.</p>
 
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-            <label className="block text-sm font-medium text-green-800 mb-1">Tenancy Agreement Document</label>
-            <p className="text-xs text-green-600 mb-3">Upload your standard tenancy agreement (PDF, DOCX) that tenants will sign upon moving in.</p>
+          <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4">
+            <label className="block text-sm font-medium text-green-800 dark:text-green-300 mb-1">Tenancy Agreement Document</label>
+            <p className="text-xs text-green-600 dark:text-green-400 mb-3">Upload your standard tenancy agreement (PDF, DOCX) that tenants will sign upon moving in.</p>
             <input
               type="file"
               accept=".pdf,.doc,.docx"
@@ -394,9 +394,9 @@ export default function NewListingPage() {
                   update('agreement_doc', file.name)
                 }
               }}
-              className="w-full text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
+              className="w-full text-sm text-slate-500 dark:text-white file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-green-100 file:text-green-700 hover:file:bg-green-200"
             />
-            {agreementFile && <p className="text-xs text-green-700 mt-1">Selected: {agreementFile.name}</p>}
+            {agreementFile && <p className="text-xs text-green-700 dark:text-green-400 mt-1">Selected: {agreementFile.name}</p>}
           </div>
 
           <div
@@ -405,7 +405,7 @@ export default function NewListingPage() {
               e.preventDefault()
               setMediaFiles((prev) => [...prev, ...Array.from(e.dataTransfer.files)])
             }}
-            className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center hover:border-green-400 transition-colors cursor-pointer"
+            className="border-2 border-dashed border-slate-300 dark:border-gray-600 rounded-2xl p-8 text-center hover:border-green-400 transition-colors cursor-pointer"
             onClick={() => document.getElementById('media-upload')?.click()}
           >
             <input
@@ -413,12 +413,12 @@ export default function NewListingPage() {
               type="file"
               multiple
               accept="image/*,video/*"
-              className="hidden"
+              className="hidden dark:text-white"
               onChange={(e) => {
                 if (e.target.files) setMediaFiles((prev) => [...prev, ...Array.from(e.target.files!)])
               }}
             />
-            <div className="text-slate-400">
+            <div className="text-slate-400 dark:text-slate-500">
               <svg className="w-10 h-10 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
               </svg>
@@ -430,9 +430,9 @@ export default function NewListingPage() {
           {mediaFiles.length > 0 && (
             <div className="grid grid-cols-4 gap-2">
               {mediaFiles.map((f, i) => (
-                <div key={i} className="relative group aspect-square rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                <div key={i} className="relative group aspect-square rounded-xl overflow-hidden bg-white/80 dark:bg-gray-800 border border-slate-200 dark:border-gray-700">
                   {f.type.startsWith('video/') ? (
-                    <div className="w-full h-full flex items-center justify-center text-slate-400">
+                      <div className="w-full h-full flex items-center justify-center text-slate-400 dark:text-slate-500">
                       <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
                       </svg>
@@ -457,7 +457,7 @@ export default function NewListingPage() {
           <div className="flex justify-between pt-2">
             <button
               onClick={() => setStep(3)}
-              className="bg-slate-200 hover:bg-slate-300 text-slate-700 px-6 py-3 rounded-xl text-sm font-medium"
+              className="bg-slate-200 dark:bg-gray-700 hover:bg-slate-300 dark:hover:bg-gray-600 text-slate-700 dark:text-slate-300 px-6 py-3 rounded-xl text-sm font-medium"
             >
               Back
             </button>

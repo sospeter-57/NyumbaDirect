@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="px-12 py-8 text-center text-slate-500">Loading dashboard...</div>
+      <div className="px-12 py-8 text-center text-slate-500 dark:text-slate-400">Loading dashboard...</div>
     )
   }
 
@@ -59,8 +59,8 @@ export default function DashboardPage() {
     <div className="px-12 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-black">My Dashboard</h1>
-          <p className="text-slate-500 text-sm mt-1">Manage your property listings</p>
+          <h1 className="text-2xl font-bold text-black dark:text-white">My Dashboard</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Manage your property listings</p>
         </div>
         <Link
           to="/listings/new"
@@ -72,7 +72,7 @@ export default function DashboardPage() {
 
       {listings.length === 0 ? (
         <div className="text-center py-16">
-          <p className="text-slate-500 mb-4">You haven't posted any listings yet.</p>
+          <p className="text-slate-500 dark:text-slate-400 mb-4">You haven't posted any listings yet.</p>
           <Link
             to="/listings/new"
             className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl text-sm font-medium inline-block"
@@ -81,49 +81,53 @@ export default function DashboardPage() {
           </Link>
         </div>
       ) : (
-        <div className="max-w-2xl space-y-4">
-          {listings.map(({ property, repair_rates, traffic }) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {listings.map(({ property, repair_rates, traffic }, i) => (
             <div
               key={property.id}
-              className="bg-white/90 backdrop-blur-sm border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow"
+              className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-slate-200 dark:border-gray-700 rounded-2xl overflow-hidden card-tilt animate-float-in group"
+              style={{ animationDelay: `${i * 100}ms` }}
             >
               <div className="h-1.5 bg-gradient-to-r from-green-600 to-green-400" />
-              <div className="p-5">
+              <div
+                className="p-5 animate-float"
+                style={{ animationDuration: `${4 + (i % 3) * 1}s`, animationDelay: `${i * 0.3}s` }}
+              >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1 min-w-0 mr-3">
-                    <h3 className="font-semibold text-black truncate">
+                    <h3 className="font-semibold text-black dark:text-white truncate">
                       {property.title || `${property.house_type} Unit`}
                     </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                       {property.location_desc || 'No location'}
                     </p>
                   </div>
                   <StatusBadge status={property.active_status} />
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 mb-4 bg-slate-50 rounded-xl p-3">
+                <div className="grid grid-cols-3 gap-4 mb-4 bg-white/80 dark:bg-gray-800 rounded-xl p-3">
                   <div className="text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider">Rent</p>
-                    <p className="text-base font-bold text-black mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">Rent</p>
+                    <p className="text-base font-bold text-black dark:text-white mt-0.5">
                       KES {property.rent.toLocaleString()}
                     </p>
                   </div>
-                  <div className="text-center border-x border-slate-200">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider">Unlocks</p>
-                    <p className="text-base font-bold text-black mt-0.5">
+                  <div className="text-center border-x border-slate-200 dark:border-gray-700">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">Unlocks</p>
+                    <p className="text-base font-bold text-black dark:text-white mt-0.5">
                       {traffic?.total_unlocks ?? 0}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-slate-400 uppercase tracking-wider">Tenants</p>
-                    <p className="text-base font-bold text-black mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-wider">Tenants</p>
+                    <p className="text-base font-bold text-black dark:text-white mt-0.5">
                       {traffic?.unique_tenants ?? 0}
                     </p>
                   </div>
                 </div>
 
                 {repair_rates.length > 0 && (
-                  <details className="text-xs text-slate-500 mb-3">
+                  <details className="text-xs text-slate-500 dark:text-slate-400 mb-3">
                     <summary className="cursor-pointer hover:text-black font-medium">
                       {repair_rates.length} Repair Rate{repair_rates.length !== 1 ? 's' : ''}
                     </summary>
@@ -131,7 +135,7 @@ export default function DashboardPage() {
                       {repair_rates.map((r) => (
                         <li key={r.id} className="flex justify-between py-0.5">
                           <span>{r.item_name}</span>
-                          <span className="font-medium text-black">KES {r.cost.toLocaleString()}</span>
+                          <span className="font-medium text-black dark:text-white">KES {r.cost.toLocaleString()}</span>
                         </li>
                       ))}
                     </ul>
@@ -150,7 +154,7 @@ export default function DashboardPage() {
                 {property.active_status === 'ACTIVE' && (
                   <Link
                     to={`/properties/${property.id}`}
-                    className="inline-flex items-center gap-1 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
+                    className="inline-flex items-center gap-1 text-sm font-semibold text-green-700 dark:text-green-400 hover:text-green-800 transition-colors"
                   >
                     View Public Listing &rarr;
                   </Link>

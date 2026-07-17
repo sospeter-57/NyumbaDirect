@@ -24,7 +24,7 @@ export default function RegisterPage() {
     }
     try {
       await register(phone, password, role, role === 'landlord' ? '' : name, role === 'landlord' ? name : '')
-      navigate('/explore')
+      navigate('/')
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Registration failed')
     }
@@ -34,21 +34,21 @@ export default function RegisterPage() {
     <div className="min-h-[calc(100vh-72px)] flex items-center justify-center px-12">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-black">Create Account</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-3xl font-bold text-black dark:text-white">Create Account</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
             Start your journey home today
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
+        <form onSubmit={handleSubmit} className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 rounded-2xl p-6 space-y-4 shadow-sm">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-3">
+            <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm rounded-xl p-3">
               {error}
             </div>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               I am a...
             </label>
             <div className="flex gap-2">
@@ -78,7 +78,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               {role === 'landlord' ? 'Business / Brand Name' : 'Your Name'}
             </label>
             <input
@@ -86,12 +86,12 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={role === 'landlord' ? 'My Property Co.' : 'John Doe'}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               Phone Number
             </label>
             <input
@@ -99,20 +99,20 @@ export default function RegisterPage() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+2547XXXXXXXX"
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
+              className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white focus:outline-none focus:ring-2 focus:ring-green-700 focus:border-transparent"
               placeholder="At least 6 characters"
               required
             />
@@ -127,9 +127,9 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <p className="text-center text-sm text-slate-500 mt-6">
+        <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
           Already have an account?{' '}
-          <Link to="/login" className="text-green-700 hover:text-green-800 font-medium">
+          <Link to="/login" className="text-green-700 dark:text-green-400 hover:text-green-800 font-medium">
             Sign In
           </Link>
         </p>
