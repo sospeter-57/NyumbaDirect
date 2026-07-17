@@ -124,6 +124,21 @@ func (d *DB) migrate() error {
 		`CREATE INDEX IF NOT EXISTS idx_subscriptions_checkout ON subscriptions(mpesa_checkout_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_unlocks_property ON contact_unlocks(property_id)`,
 		`CREATE INDEX IF NOT EXISTS idx_reviews_property ON property_reviews(property_id)`,
+		`CREATE TABLE IF NOT EXISTS feedback (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL REFERENCES users(id),
+			message TEXT NOT NULL,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)`,
+		`CREATE TABLE IF NOT EXISTS landlord_ratings (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			tenant_id INTEGER NOT NULL REFERENCES users(id),
+			landlord_id INTEGER NOT NULL REFERENCES users(id),
+			rating INTEGER NOT NULL CHECK(rating >= 1 AND rating <= 5),
+			comment TEXT NOT NULL DEFAULT '',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			UNIQUE(tenant_id, landlord_id)
+		)`,
 	}
 
 	for _, stmt := range statements {
@@ -675,6 +690,119 @@ func (d *DB) GetPropertyPhotos(propertyID int64) ([]models.PropertyPhoto, error)
 		photos = append(photos, p)
 	}
 	return photos, nil
+}
+
+func (d *DB) CreateFeedback(userID int64, message string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	_, err := d.Exec(
+		"INSERT INTO feedback (user_id, message) VALUES (?, ?)",
+		userID, message,
+	)
+	return err
+}
+
+func (d *DB) GetFeedback() ([]map[string]interface{}, error) {
+	rows, err := d.Query(
+		`SELECT f.id, f.message, f.created_at, u.name, u.business_name, u.profile_picture
+		 FROM feedback f JOIN users u ON f.user_id = u.id
+		 ORDER BY f.created_at DESC`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []map[string]interface{}
+	for rows.Next() {
+		var id int64
+		var message, name, businessName, profilePicture string
+		var createdAt time.Time
+		if err := rows.Scan(&id, &message, &createdAt, &name, &businessName, &profilePicture); err != nil {
+			return nil, err
+		}
+		author := name
+		if businessName != "" {
+			author = businessName
+		}
+		result = append(result, map[string]interface{}{
+			"id":              id,
+			"message":         message,
+			"created_at":      createdAt,
+			"author":          author,
+			"profile_picture": profilePicture,
+		})
+	}
+	return result, nil
+}
+
+func (d *DB) GetStats() (activeProperties, landlords, unlocks int, err error) {
+	d.QueryRow("SELECT COUNT(*) FROM properties WHERE active_status = 'ACTIVE'").Scan(&activeProperties)
+	d.QueryRow("SELECT COUNT(*) FROM users WHERE role = 'landlord'").Scan(&landlords)
+	d.QueryRow("SELECT COUNT(*) FROM contact_unlocks").Scan(&unlocks)
+	return
+}
+
+func (d *DB) CreateLandlordRating(tenantID, landlordID int64, rating int, comment string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	_, err := d.Exec(
+		"INSERT INTO landlord_ratings (tenant_id, landlord_id, rating, comment) VALUES (?, ?, ?, ?)",
+		tenantID, landlordID, rating, comment,
+	)
+	return err
+}
+
+func (d *DB) GetLandlordRatings(landlordID int64) ([]map[string]interface{}, error) {
+	rows, err := d.Query(
+		`SELECT lr.id, lr.rating, lr.comment, lr.created_at, u.name, u.profile_picture
+		 FROM landlord_ratings lr JOIN users u ON lr.tenant_id = u.id
+		 WHERE lr.landlord_id = ? ORDER BY lr.created_at DESC`,
+		landlordID,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []map[string]interface{}
+	for rows.Next() {
+		var id int64
+		var rating int
+		var comment, name, profilePicture string
+		var createdAt time.Time
+		if err := rows.Scan(&id, &rating, &comment, &createdAt, &name, &profilePicture); err != nil {
+			return nil, err
+		}
+		result = append(result, map[string]interface{}{
+			"id":              id,
+			"rating":          rating,
+			"comment":         comment,
+			"created_at":      createdAt,
+			"tenant_name":     name,
+			"profile_picture": profilePicture,
+		})
+	}
+	return result, nil
+}
+
+func (d *DB) GetLandlordRatingAverage(landlordID int64) (float64, int, error) {
+	var avg sql.NullFloat64
+	var count int
+	err := d.QueryRow(
+		"SELECT AVG(rating), COUNT(*) FROM landlord_ratings WHERE landlord_id = ?",
+		landlordID,
+	).Scan(&avg, &count)
+	return avg.Float64, count, err
+}
+
+func (d *DB) HasRatedLandlord(tenantID, landlordID int64) (bool, error) {
+	var count int
+	err := d.QueryRow(
+		"SELECT COUNT(*) FROM landlord_ratings WHERE tenant_id = ? AND landlord_id = ?",
+		tenantID, landlordID,
+	).Scan(&count)
+	return count > 0, err
 }
 
 func boolToInt(b bool) int {

@@ -68,6 +68,7 @@ func main() {
 	tenantHandler := handlers.NewTenantHandler(db)
 	landlordHandler := handlers.NewLandlordHandler(db)
 	uploadHandler := handlers.NewUploadHandler(db)
+	feedbackHandler := handlers.NewFeedbackHandler(db)
 
 	r := chi.NewRouter()
 
@@ -158,9 +159,14 @@ func main() {
 				r.Use(authMw, landlordMw)
 				r.Get("/profile", landlordHandler.Profile)
 			})
+			r.Get("/{id}/ratings", landlordHandler.Ratings)
+			r.With(authMw, tenantMw).Post("/{id}/rate", landlordHandler.Rate)
 		})
 
 		r.With(authMw).Post("/upload/profile-picture", uploadHandler.ProfilePicture)
+		r.Get("/feedback", feedbackHandler.List)
+		r.Get("/stats", feedbackHandler.Stats)
+		r.With(authMw).Post("/feedback", feedbackHandler.Submit)
 		r.With(authMw, landlordMw).Post("/properties/{id}/media", uploadHandler.PropertyMedia)
 
 		r.Route("/analytics", func(r chi.Router) {

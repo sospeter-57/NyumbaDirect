@@ -243,3 +243,7 @@ type TrafficStats struct {
 	TotalUnlocks  int `json:"total_unlocks"`
 	UniqueTenants int `json:"unique_tenants"`
 }
+
+type FeedbackRequest struct {
+	Message string `json:"message"`
+}
