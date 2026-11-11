@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
+import LocationPicker from '../components/LocationPicker'
 import type { HouseType, ListingFormData } from '../types'
 
 const HOUSE_TYPES: HouseType[] = [
@@ -198,31 +199,18 @@ export default function NewListingPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-black dark:text-white mb-1">
-                Latitude
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.latitude}
-                onChange={(e) => update('latitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-black dark:text-white mb-1">
-                Longitude
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.longitude}
-                onChange={(e) => update('longitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
+              Property Location
+            </label>
+            <LocationPicker
+              latitude={form.latitude}
+              longitude={form.longitude}
+              onChange={(latitude, longitude) => {
+                update('latitude', latitude)
+                update('longitude', longitude)
+              }}
+            />
           </div>
 
           <div className="flex justify-end">

@@ -1,31 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
-import L from 'leaflet'
 import { api, uploadUrl } from '../utils/api'
 import { useAuth } from '../context/AuthContext'
 import { haversineDistance, formatDistance } from '../utils/haversine'
+import PropertyMap from '../components/PropertyMap'
 import type { Property, RepairRate } from '../types'
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
-
-function ZoomControls() {
-  const map = useMap()
-  return (
-    <div className="absolute bottom-4 right-4 flex flex-col gap-1 z-[1000]">
-      <button onClick={() => map.zoomIn()} className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 w-9 h-9 rounded-lg shadow-md flex items-center justify-center text-lg font-medium transition-colors">+</button>
-      <button onClick={() => map.zoomOut()} className="bg-white/80 dark:bg-gray-900/80 border border-slate-200 dark:border-gray-700 hover:bg-slate-50 text-slate-700 dark:text-slate-300 w-9 h-9 rounded-lg shadow-md flex items-center justify-center text-lg font-medium transition-colors">−</button>
-    </div>
-  )
-}
-import markerIcon from 'leaflet/dist/images/marker-icon.png'
-import markerShadow from 'leaflet/dist/images/marker-shadow.png'
-
-delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-})
 
 export default function PropertyDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -333,27 +312,17 @@ export default function PropertyDetailPage() {
                   </button>
                 </div>
                 <div className="relative h-[55vh] min-h-[380px]">
-                  <MapContainer
+                  <PropertyMap
+                    properties={[property]}
                     center={[property.latitude, property.longitude]}
                     zoom={16}
                     className="w-full h-full z-0"
-                    zoomControl={false}
-                    scrollWheelZoom={true}
-                  >
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    <ZoomControls />
-                    <Marker position={[property.latitude, property.longitude]}>
-                      <Popup>
-                        <div className="text-sm">
-                          <strong>{property.title || property.house_type}</strong>
-                          <br />KES {property.rent.toLocaleString()}/month
-                        </div>
-                      </Popup>
-                    </Marker>
-                  </MapContainer>
+                    userLocation={
+                      userLat !== null && userLng !== null
+                        ? { latitude: userLat, longitude: userLng }
+                        : null
+                    }
+                  />
                 </div>
               </div>
             </div>
