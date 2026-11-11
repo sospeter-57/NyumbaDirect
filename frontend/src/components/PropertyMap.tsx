@@ -136,9 +136,9 @@ export default function PropertyMap({
                 <span className="block text-slate-600">
                   {property.house_type} · KES {property.rent.toLocaleString()}/month
                 </span>
-                {property.location_desc && (
+                {(property.formatted_address || property.location_desc) && (
                   <span className="block text-slate-500 text-xs">
-                    {property.location_desc}
+                    {property.formatted_address || property.location_desc}
                   </span>
                 )}
                 <Link

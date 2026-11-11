@@ -155,8 +155,13 @@ export default function PropertyDetailPage() {
                   {property.title || `${property.house_type} Unit`}
                 </h1>
                 <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                  {property.location_desc || 'Nairobi'}
+                  {property.formatted_address || property.location_desc || 'Nairobi'}
                 </p>
+                {property.place_name && property.formatted_address && (
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                    {property.place_name}
+                  </p>
+                )}
                 {distance && (
                   <p className="text-sm text-green-700 dark:text-green-400 font-medium mt-1">
                     {distance} away
@@ -302,7 +307,7 @@ export default function PropertyDetailPage() {
                     </svg>
                     <div>
                       <h3 className="font-semibold">{property.title || property.house_type}</h3>
-                      <p className="text-green-200 dark:text-green-400 text-xs">KES {property.rent.toLocaleString()}/month &middot; {property.location_desc || 'Nairobi'}</p>
+                      <p className="text-green-200 dark:text-green-400 text-xs">KES {property.rent.toLocaleString()}/month &middot; {property.formatted_address || property.location_desc || 'Nairobi'}</p>
                     </div>
                   </div>
                   <button onClick={() => setShowMap(false)} className="text-white/80 dark:text-white/60 hover:text-white bg-white/10 hover:bg-white/20 dark:hover:bg-white/10 rounded-xl p-2 transition-colors">

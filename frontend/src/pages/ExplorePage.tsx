@@ -48,7 +48,7 @@ function PropertyCard({
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0 mr-3">
             <h3 className="font-semibold text-black dark:text-white truncate">{property.title || `${property.house_type} Unit`}</h3>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{property.location_desc || 'Nairobi'}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{property.formatted_address || property.location_desc || 'Nairobi'}</p>
           </div>
           <span className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-semibold px-2.5 py-1 rounded-lg shrink-0">
             {property.house_type}

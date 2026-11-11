@@ -186,6 +186,23 @@ export const api = {
     },
   },
 
+  geocode: {
+    search: (q: string, opts?: { limit?: number; lat?: number; lon?: number; signal?: AbortSignal }) => {
+      const params = new URLSearchParams({ q })
+      if (opts?.limit) params.set('limit', String(opts.limit))
+      if (opts?.lat !== undefined) params.set('lat', String(opts.lat))
+      if (opts?.lon !== undefined) params.set('lon', String(opts.lon))
+      return request<import('../types').LocationResult[]>(`/geocode/search?${params.toString()}`, {
+        signal: opts?.signal,
+      })
+    },
+    reverse: (lat: number, lon: number, opts?: { signal?: AbortSignal }) =>
+      request<import('../types').LocationResult | null>(
+        `/geocode/reverse?lat=${lat}&lon=${lon}`,
+        { signal: opts?.signal }
+      ),
+  },
+
   stats: {
     get: () =>
       request<{ active_properties: number; landlords: number; contact_unlocks: number }>('/stats'),

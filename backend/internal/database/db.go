@@ -156,6 +156,9 @@ func (d *DB) migrateColumns() {
 		"ALTER TABLE users ADD COLUMN business_name TEXT NOT NULL DEFAULT ''",
 		"ALTER TABLE users ADD COLUMN profile_picture TEXT NOT NULL DEFAULT ''",
 		"ALTER TABLE properties ADD COLUMN agreement_doc TEXT NOT NULL DEFAULT ''",
+		"ALTER TABLE properties ADD COLUMN place_id TEXT NOT NULL DEFAULT ''",
+		"ALTER TABLE properties ADD COLUMN formatted_address TEXT NOT NULL DEFAULT ''",
+		"ALTER TABLE properties ADD COLUMN place_name TEXT NOT NULL DEFAULT ''",
 	}
 	for _, stmt := range columns {
 		d.Exec(stmt)
@@ -212,11 +215,13 @@ func (d *DB) CreateProperty(landlordID int64, req *models.ListingRequest) (*mode
 
 	res, err := d.Exec(
 		`INSERT INTO properties (landlord_id, house_type, rent, deposit, latitude, longitude,
+			place_id, formatted_address, place_name,
 			title, description, location_desc, has_borehole, is_tokens_meter, has_hot_shower,
 			has_wifi, gate_curfew_enabled, water_rationing_active, pets_allowed, agreement_doc, active_status)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING_PAY')`,
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'PENDING_PAY')`,
 		landlordID, string(req.HouseType), req.Rent, req.Deposit,
-		req.Latitude, req.Longitude, req.Title, req.Description, req.LocationDesc,
+		req.Latitude, req.Longitude, req.PlaceID, req.FormattedAddress, req.PlaceName,
+		req.Title, req.Description, req.LocationDesc,
 		boolToInt(req.HasBorehole), boolToInt(req.IsTokensMeter), boolToInt(req.HasHotShower),
 		boolToInt(req.HasWiFi), boolToInt(req.GateCurfewEnabled), boolToInt(req.WaterRationing),
 		boolToInt(req.PetsAllowed), req.AgreementDoc,
@@ -243,11 +248,13 @@ func (d *DB) GetProperty(id int64) (*models.Property, error) {
 	var borehole, tokens, shower, wifi, curfew, water, pets int
 	err := d.QueryRow(
 		`SELECT id, landlord_id, house_type, rent, deposit, latitude, longitude,
+			place_id, formatted_address, place_name,
 			title, description, location_desc, has_borehole, is_tokens_meter, has_hot_shower,
 			has_wifi, gate_curfew_enabled, water_rationing_active, pets_allowed, agreement_doc, active_status, created_at, updated_at
 		 FROM properties WHERE id = ?`, id,
 	).Scan(&p.ID, &p.LandlordID, &p.HouseType, &p.Rent, &p.Deposit,
-		&p.Latitude, &p.Longitude, &p.Title, &p.Description, &p.LocationDesc,
+		&p.Latitude, &p.Longitude, &p.PlaceID, &p.FormattedAddress, &p.PlaceName,
+		&p.Title, &p.Description, &p.LocationDesc,
 		&borehole, &tokens, &shower, &wifi, &curfew, &water, &pets,
 		&p.AgreementDoc, &p.ActiveStatus, &p.CreatedAt, &p.UpdatedAt)
 	if err != nil {
@@ -275,6 +282,7 @@ func (d *DB) UpdatePropertyStatus(id int64, status models.ActiveStatus) error {
 
 func (d *DB) ListPropertiesInBounds(north, south, east, west float64, statuses ...models.ActiveStatus) ([]*models.Property, error) {
 	query := `SELECT id, landlord_id, house_type, rent, deposit, latitude, longitude,
+			place_id, formatted_address, place_name,
 			title, description, location_desc, has_borehole, is_tokens_meter, has_hot_shower,
 			has_wifi, gate_curfew_enabled, water_rationing_active, pets_allowed, agreement_doc, active_status, created_at, updated_at
 		 FROM properties WHERE latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?`
@@ -300,7 +308,8 @@ func (d *DB) ListPropertiesInBounds(north, south, east, west float64, statuses .
 		p := &models.Property{}
 		var borehole, tokens, shower, wifi, curfew, water, pets int
 		if err := rows.Scan(&p.ID, &p.LandlordID, &p.HouseType, &p.Rent, &p.Deposit,
-			&p.Latitude, &p.Longitude, &p.Title, &p.Description, &p.LocationDesc,
+			&p.Latitude, &p.Longitude, &p.PlaceID, &p.FormattedAddress, &p.PlaceName,
+			&p.Title, &p.Description, &p.LocationDesc,
 			&borehole, &tokens, &shower, &wifi, &curfew, &water, &pets,
 			&p.AgreementDoc, &p.ActiveStatus, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err
@@ -320,6 +329,7 @@ func (d *DB) ListPropertiesInBounds(north, south, east, west float64, statuses .
 func (d *DB) GetLandlordProperties(landlordID int64) ([]*models.Property, error) {
 	rows, err := d.Query(
 		`SELECT id, landlord_id, house_type, rent, deposit, latitude, longitude,
+			place_id, formatted_address, place_name,
 			title, description, location_desc, has_borehole, is_tokens_meter, has_hot_shower,
 			has_wifi, gate_curfew_enabled, water_rationing_active, pets_allowed, agreement_doc, active_status, created_at, updated_at
 		 FROM properties WHERE landlord_id = ? ORDER BY created_at DESC`, landlordID,
@@ -334,7 +344,8 @@ func (d *DB) GetLandlordProperties(landlordID int64) ([]*models.Property, error)
 		p := &models.Property{}
 		var borehole, tokens, shower, wifi, curfew, water, pets int
 		if err := rows.Scan(&p.ID, &p.LandlordID, &p.HouseType, &p.Rent, &p.Deposit,
-			&p.Latitude, &p.Longitude, &p.Title, &p.Description, &p.LocationDesc,
+			&p.Latitude, &p.Longitude, &p.PlaceID, &p.FormattedAddress, &p.PlaceName,
+			&p.Title, &p.Description, &p.LocationDesc,
 			&borehole, &tokens, &shower, &wifi, &curfew, &water, &pets,
 			&p.AgreementDoc, &p.ActiveStatus, &p.CreatedAt, &p.UpdatedAt); err != nil {
 			return nil, err

@@ -8,7 +8,7 @@ A dual-sided rental marketplace connecting Kenyan tenants directly with landlord
 |---|---|
 | Frontend | React 19, TypeScript, Vite, Tailwind CSS v4 |
 | Backend | Go 1.26, Chi router, SQLite |
-| Maps | Leaflet + OpenStreetMap (no API key needed) |
+| Maps | Leaflet + OpenStreetMap tiles, Photon geocoding (no API key needed) |
 | Payments | Safaricom Daraja API (M-Pesa STK Push) |
 | Auth | JWT (HS256, bcrypt passwords) |
 
@@ -97,6 +97,8 @@ docker run -d -p 80:80 --link <backend-container>:backend nyumba-frontend
 | `DARAJA_PASSKEY` | No | `test-...` | Safaricom online passkey |
 | `DARAJA_SHORTCODE` | No | `174379` | Paybill number |
 | `DARAJA_ENV` | No | `sandbox` | `sandbox` or `production` |
+| `GEOCODE_URL` | No | `https://photon.komoot.io` | Photon geocoding base URL |
+| `GEOCODE_USER_AGENT` | No | `NyumbaDirect/1.0 (...)` | User-Agent sent to the geocoder (required by OSM usage policy) |
 
 ## License
 

@@ -24,6 +24,9 @@ export interface Property {
   deposit: number
   latitude: number
   longitude: number
+  place_id: string
+  formatted_address: string
+  place_name: string
   title: string
   description: string
   location_desc: string
@@ -108,6 +111,9 @@ export interface ListingFormData {
   deposit: number
   latitude: number
   longitude: number
+  place_id: string
+  formatted_address: string
+  place_name: string
   title: string
   description: string
   location_desc: string
@@ -120,6 +126,25 @@ export interface ListingFormData {
   pets_allowed: boolean
   agreement_doc: string
   repair_rates: { item_name: string; cost: number }[]
+}
+
+export interface LocationResult {
+  place_id: string
+  name: string
+  formatted_address: string
+  latitude: number
+  longitude: number
+  osm_type?: string
+  osm_id?: number
+  category?: string
+}
+
+export interface LocationValue {
+  place_id: string
+  name: string
+  formatted_address: string
+  latitude: number
+  longitude: number
 }
 
 export interface PropertyBounds {

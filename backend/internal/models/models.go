@@ -5,7 +5,7 @@ import "time"
 type Role string
 
 const (
-	RoleTenant  Role = "tenant"
+	RoleTenant   Role = "tenant"
 	RoleLandlord Role = "landlord"
 )
 
@@ -23,19 +23,19 @@ const (
 type ActiveStatus string
 
 const (
-	StatusPending   ActiveStatus = "PENDING_PAY"
-	StatusActive    ActiveStatus = "ACTIVE"
-	StatusFlagged   ActiveStatus = "FLAGGED"
-	StatusInactive  ActiveStatus = "INACTIVE"
+	StatusPending  ActiveStatus = "PENDING_PAY"
+	StatusActive   ActiveStatus = "ACTIVE"
+	StatusFlagged  ActiveStatus = "FLAGGED"
+	StatusInactive ActiveStatus = "INACTIVE"
 )
 
 type SubscriptionStatus string
 
 const (
-	SubPending    SubscriptionStatus = "PENDING"
-	SubActive     SubscriptionStatus = "ACTIVE"
-	SubExpired    SubscriptionStatus = "EXPIRED"
-	SubFailed     SubscriptionStatus = "FAILED"
+	SubPending SubscriptionStatus = "PENDING"
+	SubActive  SubscriptionStatus = "ACTIVE"
+	SubExpired SubscriptionStatus = "EXPIRED"
+	SubFailed  SubscriptionStatus = "FAILED"
 )
 
 type User struct {
@@ -57,6 +57,9 @@ type Property struct {
 	Deposit           float64      `json:"deposit"`
 	Latitude          float64      `json:"latitude"`
 	Longitude         float64      `json:"longitude"`
+	PlaceID           string       `json:"place_id"`
+	FormattedAddress  string       `json:"formatted_address"`
+	PlaceName         string       `json:"place_name"`
 	Title             string       `json:"title"`
 	Description       string       `json:"description"`
 	LocationDesc      string       `json:"location_desc"`
@@ -81,17 +84,17 @@ type RepairRate struct {
 }
 
 type Subscription struct {
-	ID             int64              `json:"id"`
-	UserID         int64              `json:"user_id"`
-	PropertyID     *int64             `json:"property_id,omitempty"`
-	Type           string             `json:"type"`
-	Status         SubscriptionStatus `json:"status"`
-	MpesaCheckoutID string            `json:"mpesa_checkout_id,omitempty"`
-	MpesaReceipt   string             `json:"mpesa_receipt,omitempty"`
-	Phone          string             `json:"phone"`
-	Amount         float64            `json:"amount"`
-	CreatedAt      time.Time          `json:"created_at"`
-	ExpiresAt      *time.Time         `json:"expires_at,omitempty"`
+	ID              int64              `json:"id"`
+	UserID          int64              `json:"user_id"`
+	PropertyID      *int64             `json:"property_id,omitempty"`
+	Type            string             `json:"type"`
+	Status          SubscriptionStatus `json:"status"`
+	MpesaCheckoutID string             `json:"mpesa_checkout_id,omitempty"`
+	MpesaReceipt    string             `json:"mpesa_receipt,omitempty"`
+	Phone           string             `json:"phone"`
+	Amount          float64            `json:"amount"`
+	CreatedAt       time.Time          `json:"created_at"`
+	ExpiresAt       *time.Time         `json:"expires_at,omitempty"`
 }
 
 type ContactUnlock struct {
@@ -113,27 +116,27 @@ type PropertyReview struct {
 }
 
 type MoveInCertificate struct {
-	PropertyID   int64             `json:"property_id"`
-	TenantName   string            `json:"tenant_name"`
-	LandlordName string            `json:"landlord_name"`
-	PropertyAddr string            `json:"property_address"`
-	Timestamp    time.Time         `json:"timestamp"`
-	Items        []InspectionItem  `json:"items"`
+	PropertyID   int64            `json:"property_id"`
+	TenantName   string           `json:"tenant_name"`
+	LandlordName string           `json:"landlord_name"`
+	PropertyAddr string           `json:"property_address"`
+	Timestamp    time.Time        `json:"timestamp"`
+	Items        []InspectionItem `json:"items"`
 }
 
 type InspectionItem struct {
-	Area        string `json:"area"`
-	Condition   string `json:"condition"`
-	PhotoURL    string `json:"photo_url,omitempty"`
-	Notes       string `json:"notes,omitempty"`
+	Area      string `json:"area"`
+	Condition string `json:"condition"`
+	PhotoURL  string `json:"photo_url,omitempty"`
+	Notes     string `json:"notes,omitempty"`
 }
 
 type FairRefundCertificate struct {
-	PropertyID    int64              `json:"property_id"`
-	DepositAmount float64            `json:"deposit_amount"`
+	PropertyID     int64             `json:"property_id"`
+	DepositAmount  float64           `json:"deposit_amount"`
 	TotalDeduction float64           `json:"total_deduction"`
-	RefundAmount  float64            `json:"refund_amount"`
-	Deductions    []RepairDeduction  `json:"deductions"`
+	RefundAmount   float64           `json:"refund_amount"`
+	Deductions     []RepairDeduction `json:"deductions"`
 }
 
 type RepairDeduction struct {
@@ -172,6 +175,9 @@ type ListingRequest struct {
 	Deposit           float64   `json:"deposit"`
 	Latitude          float64   `json:"latitude"`
 	Longitude         float64   `json:"longitude"`
+	PlaceID           string    `json:"place_id"`
+	FormattedAddress  string    `json:"formatted_address"`
+	PlaceName         string    `json:"place_name"`
 	Title             string    `json:"title"`
 	Description       string    `json:"description"`
 	LocationDesc      string    `json:"location_desc"`
@@ -187,6 +193,17 @@ type ListingRequest struct {
 		ItemName string  `json:"item_name"`
 		Cost     float64 `json:"cost"`
 	} `json:"repair_rates,omitempty"`
+}
+
+type GeocodeResult struct {
+	PlaceID          string  `json:"place_id"`
+	Name             string  `json:"name"`
+	FormattedAddress string  `json:"formatted_address"`
+	Latitude         float64 `json:"latitude"`
+	Longitude        float64 `json:"longitude"`
+	OSMType          string  `json:"osm_type,omitempty"`
+	OSMID            int64   `json:"osm_id,omitempty"`
+	Category         string  `json:"category,omitempty"`
 }
 
 type PropertyBounds struct {

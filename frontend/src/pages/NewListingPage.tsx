@@ -26,8 +26,11 @@ export default function NewListingPage() {
     house_type: '1-Bed',
     rent: 0,
     deposit: 0,
-    latitude: -1.286389,
-    longitude: 36.817223,
+    latitude: 0,
+    longitude: 0,
+    place_id: '',
+    formatted_address: '',
+    place_name: '',
     title: '',
     description: '',
     location_desc: '',
@@ -204,18 +207,44 @@ export default function NewListingPage() {
               Property Location
             </label>
             <LocationPicker
-              latitude={form.latitude}
-              longitude={form.longitude}
-              onChange={(latitude, longitude) => {
-                update('latitude', latitude)
-                update('longitude', longitude)
+              value={
+                form.latitude !== 0 || form.longitude !== 0
+                  ? {
+                      place_id: form.place_id,
+                      name: form.place_name,
+                      formatted_address: form.formatted_address,
+                      latitude: form.latitude,
+                      longitude: form.longitude,
+                    }
+                  : null
+              }
+              onChange={(location) => {
+                setForm((prev) => ({
+                  ...prev,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  place_id: location.place_id,
+                  place_name: location.name,
+                  formatted_address: location.formatted_address,
+                  location_desc:
+                    prev.location_desc ||
+                    location.name ||
+                    location.formatted_address,
+                }))
               }}
             />
           </div>
 
           <div className="flex justify-end">
             <button
-              onClick={() => setStep(2)}
+              onClick={() => {
+                if (form.latitude === 0 && form.longitude === 0) {
+                  setError('Please select the property location on the map.')
+                  return
+                }
+                setError('')
+                setStep(2)
+              }}
               className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl text-sm font-medium"
             >
               Next: Amenities
