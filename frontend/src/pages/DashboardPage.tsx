@@ -99,7 +99,7 @@ export default function DashboardPage() {
                       {property.title || `${property.house_type} Unit`}
                     </h3>
                     <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
-                      {property.location_desc || 'No location'}
+                      {property.formatted_address || property.location_desc || 'No location'}
                     </p>
                   </div>
                   <StatusBadge status={property.active_status} />

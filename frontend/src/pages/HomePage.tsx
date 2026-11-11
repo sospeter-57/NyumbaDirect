@@ -209,7 +209,7 @@ export default function HomePage() {
                   <div className="p-4">
                     <span className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-semibold px-2 py-0.5 rounded-lg">{p.house_type}</span>
                     <h3 className="font-semibold text-black dark:text-white text-sm mt-2 group-hover:text-green-700 dark:group-hover:text-green-400 transition-colors truncate">{p.title || `${p.house_type} Unit`}</h3>
-                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{p.location_desc || 'Nairobi'}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 truncate">{p.formatted_address || p.location_desc || 'Nairobi'}</p>
                     <p className="text-lg font-bold text-black dark:text-white mt-2">KES {p.rent.toLocaleString()}<span className="text-xs text-slate-400 dark:text-slate-500 font-normal">/mo</span></p>
                   </div>
                 </Link>

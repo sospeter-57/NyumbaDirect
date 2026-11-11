@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
+import LocationPicker from '../components/LocationPicker'
 import type { HouseType, ListingFormData } from '../types'
 
 const HOUSE_TYPES: HouseType[] = [
@@ -25,8 +26,11 @@ export default function NewListingPage() {
     house_type: '1-Bed',
     rent: 0,
     deposit: 0,
-    latitude: -1.286389,
-    longitude: 36.817223,
+    latitude: 0,
+    longitude: 0,
+    place_id: '',
+    formatted_address: '',
+    place_name: '',
     title: '',
     description: '',
     location_desc: '',
@@ -198,36 +202,49 @@ export default function NewListingPage() {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-black dark:text-white mb-1">
-                Latitude
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.latitude}
-                onChange={(e) => update('latitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-black dark:text-white mb-1">
-                Longitude
-              </label>
-              <input
-                type="number"
-                step="0.0001"
-                value={form.longitude}
-                onChange={(e) => update('longitude', parseFloat(e.target.value) || 0)}
-                className="w-full border border-slate-300 dark:border-gray-600 rounded-xl px-4 py-3 text-sm dark:text-white"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-black dark:text-white mb-1">
+              Property Location
+            </label>
+            <LocationPicker
+              value={
+                form.latitude !== 0 || form.longitude !== 0
+                  ? {
+                      place_id: form.place_id,
+                      name: form.place_name,
+                      formatted_address: form.formatted_address,
+                      latitude: form.latitude,
+                      longitude: form.longitude,
+                    }
+                  : null
+              }
+              onChange={(location) => {
+                setForm((prev) => ({
+                  ...prev,
+                  latitude: location.latitude,
+                  longitude: location.longitude,
+                  place_id: location.place_id,
+                  place_name: location.name,
+                  formatted_address: location.formatted_address,
+                  location_desc:
+                    prev.location_desc ||
+                    location.name ||
+                    location.formatted_address,
+                }))
+              }}
+            />
           </div>
 
           <div className="flex justify-end">
             <button
-              onClick={() => setStep(2)}
+              onClick={() => {
+                if (form.latitude === 0 && form.longitude === 0) {
+                  setError('Please select the property location on the map.')
+                  return
+                }
+                setError('')
+                setStep(2)
+              }}
               className="bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl text-sm font-medium"
             >
               Next: Amenities

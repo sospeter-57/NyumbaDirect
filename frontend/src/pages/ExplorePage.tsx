@@ -3,9 +3,23 @@ import { Link } from 'react-router-dom'
 import { api } from '../utils/api'
 import { haversineDistance, formatDistance } from '../utils/haversine'
 import { useAuth } from '../context/AuthContext'
+import { useGeolocation } from '../hooks/useGeolocation'
+import PropertyMap from '../components/PropertyMap'
 import type { Property } from '../types'
 
-function PropertyCard({ property, userLat, userLng, index = 0 }: { property: Property; userLat: number | null; userLng: number | null; index?: number }) {
+function PropertyCard({
+  property,
+  userLat,
+  userLng,
+  index = 0,
+  selected = false,
+}: {
+  property: Property
+  userLat: number | null
+  userLng: number | null
+  index?: number
+  selected?: boolean
+}) {
   const distance = useMemo(() => {
     if (userLat === null || userLng === null) return null
     return formatDistance(haversineDistance(userLat, userLng, property.latitude, property.longitude))
@@ -19,7 +33,11 @@ function PropertyCard({ property, userLat, userLng, index = 0 }: { property: Pro
 
   return (
     <div
-      className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border border-slate-200 dark:border-gray-700 rounded-2xl overflow-hidden card-tilt group animate-float-in"
+      className={`bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border rounded-2xl overflow-hidden card-tilt group animate-float-in transition-shadow ${
+        selected
+          ? 'border-green-500 ring-2 ring-green-300 dark:ring-green-700 shadow-lg'
+          : 'border-slate-200 dark:border-gray-700'
+      }`}
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <div className="h-1.5 bg-gradient-to-r from-green-600 to-green-400" />
@@ -30,7 +48,7 @@ function PropertyCard({ property, userLat, userLng, index = 0 }: { property: Pro
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0 mr-3">
             <h3 className="font-semibold text-black dark:text-white truncate">{property.title || `${property.house_type} Unit`}</h3>
-            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{property.location_desc || 'Nairobi'}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{property.formatted_address || property.location_desc || 'Nairobi'}</p>
           </div>
           <span className="bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-xs font-semibold px-2.5 py-1 rounded-lg shrink-0">
             {property.house_type}
@@ -74,24 +92,18 @@ function PropertyCard({ property, userLat, userLng, index = 0 }: { property: Pro
 
 const HOUSE_TYPES = ['All', 'Single', 'Bedsitter', '1-Bed', '2-Bed', '3-Bed', 'Mansion'] as const
 
+type ExploreView = 'list' | 'map'
+
 export default function ExplorePage() {
   const { isTenant } = useAuth()
+  const { latitude: userLat, longitude: userLng } = useGeolocation()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
-  const [userLat, setUserLat] = useState<number | null>(null)
-  const [userLng, setUserLng] = useState<number | null>(null)
   const [filterType, setFilterType] = useState<string>('All')
   const [filterPrice, setFilterPrice] = useState<string>('')
   const [unlockedIds, setUnlockedIds] = useState<Set<number>>(new Set())
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => { setUserLat(pos.coords.latitude); setUserLng(pos.coords.longitude) },
-        () => {}
-      )
-    }
-  }, [])
+  const [view, setView] = useState<ExploreView>('list')
+  const [selectedId, setSelectedId] = useState<number | null>(null)
 
   useEffect(() => {
     setLoading(true)
@@ -124,17 +136,40 @@ export default function ExplorePage() {
     return result
   }, [properties, filterType, filterPrice, isTenant, unlockedIds])
 
+  const userLocation =
+    userLat !== null && userLng !== null
+      ? { latitude: userLat, longitude: userLng }
+      : null
+
+  const cards = filtered.map((p, i) => (
+    <PropertyCard
+      key={p.id}
+      property={p}
+      userLat={userLat}
+      userLng={userLng}
+      index={i}
+      selected={selectedId === p.id}
+    />
+  ))
+
+  const emptyState = (
+    <div className="col-span-full text-center py-20 text-slate-400 dark:text-slate-500">
+      <p className="text-lg font-medium">No properties found</p>
+      <p className="text-sm mt-1">{filterType === 'All' ? 'Check back later for new listings' : `No ${filterType} properties available`}</p>
+    </div>
+  )
+
   return (
     <div className="px-12 py-8">
-      <div className="flex items-start justify-between mb-6">
-        <div className="flex items-end gap-6">
+      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+        <div className="flex items-end gap-6 flex-wrap">
           <div>
             <h1 className="text-2xl font-bold text-black dark:text-white">Find Your Next Home</h1>
             <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">
               {filtered.length} {filtered.length === 1 ? 'property' : 'properties'} available
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm text-slate-500 dark:text-slate-400 font-medium">Filter by</span>
             <div className="relative">
               <select
@@ -160,24 +195,61 @@ export default function ExplorePage() {
             />
           </div>
         </div>
-        {loading && (
-          <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 shrink-0">
-            <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
-            Loading...
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="inline-flex rounded-xl border border-slate-200 dark:border-gray-700 overflow-hidden">
+            {(['list', 'map'] as const).map((v) => (
+              <button
+                key={v}
+                type="button"
+                onClick={() => setView(v)}
+                className={`px-4 py-2 text-sm font-medium capitalize transition-colors ${
+                  view === v
+                    ? 'bg-green-700 text-white'
+                    : 'bg-white/80 dark:bg-gray-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-gray-700'
+                }`}
+              >
+                {v}
+              </button>
+            ))}
           </div>
-        )}
+          {loading && (
+            <div className="flex items-center gap-2 text-xs text-slate-400 dark:text-slate-500 shrink-0">
+              <div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin" />
+              Loading...
+            </div>
+          )}
+        </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        {filtered.map((p, i) => (
-          <PropertyCard key={p.id} property={p} userLat={userLat} userLng={userLng} index={i} />
-        ))}
-        {!loading && filtered.length === 0 && (
-          <div className="col-span-full text-center py-20 text-slate-400 dark:text-slate-500">
-            <p className="text-lg font-medium">No properties found</p>
-            <p className="text-sm mt-1">{filterType === 'All' ? 'Check back later for new listings' : `No ${filterType} properties available`}</p>
+
+      {view === 'map' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3 relative h-[60vh] lg:h-[calc(100vh-11rem)] min-h-[420px] rounded-2xl overflow-hidden border border-slate-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/80">
+            <PropertyMap
+              properties={filtered}
+              center={[-1.286389, 36.817223]}
+              fitToMarkers
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+              userLocation={userLocation}
+            />
+            {!loading && filtered.length === 0 && (
+              <div className="absolute inset-0 z-[500] flex flex-col items-center justify-center bg-white/70 dark:bg-gray-900/70 text-center px-4 pointer-events-none">
+                <p className="text-lg font-medium text-slate-600 dark:text-slate-300">No properties on the map</p>
+                <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Try changing your filters</p>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+          <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-5 lg:max-h-[calc(100vh-11rem)] lg:overflow-y-auto lg:pr-1">
+            {cards}
+            {!loading && filtered.length === 0 && emptyState}
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {cards}
+          {!loading && filtered.length === 0 && emptyState}
+        </div>
+      )}
     </div>
   )
 }

@@ -69,6 +69,7 @@ func main() {
 	landlordHandler := handlers.NewLandlordHandler(db)
 	uploadHandler := handlers.NewUploadHandler(db)
 	feedbackHandler := handlers.NewFeedbackHandler(db)
+	geocodeHandler := handlers.NewGeocodeHandler()
 
 	r := chi.NewRouter()
 
@@ -161,6 +162,12 @@ func main() {
 			})
 			r.Get("/{id}/ratings", landlordHandler.Ratings)
 			r.With(authMw, tenantMw).Post("/{id}/rate", landlordHandler.Rate)
+		})
+
+		r.Route("/geocode", func(r chi.Router) {
+			r.Use(authMw, landlordMw)
+			r.Get("/search", geocodeHandler.Search)
+			r.Get("/reverse", geocodeHandler.Reverse)
 		})
 
 		r.With(authMw).Post("/upload/profile-picture", uploadHandler.ProfilePicture)
